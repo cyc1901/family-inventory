@@ -64,10 +64,15 @@
     .chip button { border: 0; background: transparent; color: #b91c1c; padding: 0; font-weight: 900; }
     .hint { margin: 0; color: #64748b; font-size: 13px; line-height: 1.6; }
     .shopping-card { margin-bottom: 16px; padding: 16px; }
+    .shopping-form { display: grid; grid-template-columns: 1fr 96px 88px auto; gap: 8px; margin-bottom: 12px; }
     .shopping-list { display: grid; gap: 8px; }
     .shopping-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #d1fae5; background: #f0fdf4; border-radius: 16px; padding: 10px 12px; }
-    .shopping-name { font-weight: 800; color: #064e3b; }
+    .shopping-left { min-width: 0; display: flex; align-items: center; gap: 10px; }
+    .shopping-checkbox { width: 18px; height: 18px; accent-color: #059669; flex: 0 0 auto; }
+    .shopping-name { font-weight: 800; color: #064e3b; word-break: break-word; }
+    .shopping-name.done { color: #94a3b8; text-decoration: line-through; }
     .shopping-reason { color: #64748b; font-size: 13px; }
+    .shopping-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
     .list { display: grid; gap: 12px; }
     .item-card { padding: 16px; transition: box-shadow 0.15s ease, transform 0.15s ease; }
     .item-card:hover { box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09); transform: translateY(-1px); }
@@ -99,12 +104,15 @@
       .header { align-items: stretch; flex-direction: column; }
       .stats { grid-template-columns: 1fr; }
       .toolbar { grid-template-columns: 1fr; }
+      .shopping-form { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       .category-add-row { grid-template-columns: 1fr; }
       .item-layout { align-items: stretch; flex-direction: column; }
       .item-actions { justify-content: flex-start; }
       .item-actions .btn { flex: 1 1 auto; }
       .quantity-box { order: -1; width: 100%; }
+      .shopping-item { align-items: stretch; flex-direction: column; }
+      .shopping-actions { justify-content: flex-end; }
     }
   </style>
 </head>
@@ -115,7 +123,7 @@
         <div>
           <div class="badge">🌿 家庭库存管理</div>
           <h1>家里有什么，一眼看清</h1>
-          <p class="subtitle">支持入库、出库、分类管理、有效期提醒和购物清单。数据保存在本机浏览器 localStorage 中。</p>
+          <p class="subtitle">支持入库、出库、分类管理、有效期提醒和手动购物清单。数据保存在本机浏览器 localStorage 中。</p>
         </div>
         <button class="btn btn-outline" id="clearAllBtn">🗑️ 清空库存</button>
       </section>
@@ -124,7 +132,7 @@
         <div class="card stat-card"><div><p class="stat-title">物品种类</p><p class="stat-value" id="totalKinds">0</p><p class="stat-desc">当前记录的条目数</p></div><div class="stat-icon">📦</div></div>
         <div class="card stat-card"><div><p class="stat-title">库存总数</p><p class="stat-value" id="totalQuantity">0</p><p class="stat-desc">所有数量合计</p></div><div class="stat-icon">🧺</div></div>
         <div class="card stat-card"><div><p class="stat-title">7 天内到期</p><p class="stat-value" id="expiringSoon">0</p><p class="stat-desc">建议优先使用</p></div><div class="stat-icon warning">⚠️</div></div>
-        <div class="card stat-card"><div><p class="stat-title">购物清单</p><p class="stat-value" id="shoppingCount">0</p><p class="stat-desc">库存不足或已耗尽</p></div><div class="stat-icon danger">🛒</div></div>
+        <div class="card stat-card"><div><p class="stat-title">购物清单</p><p class="stat-value" id="shoppingCount">0</p><p class="stat-desc">未完成购买项</p></div><div class="stat-icon danger">🛒</div></div>
       </section>
 
       <section class="main-grid">
@@ -168,6 +176,12 @@
               <h2>购物清单</h2>
               <button class="btn btn-outline" id="copyShoppingBtn">复制清单</button>
             </div>
+            <div class="shopping-form">
+              <input class="input" id="shoppingNameInput" placeholder="想买什么？例如：牛奶、纸巾、洗衣液" />
+              <input class="input" id="shoppingQuantityInput" type="number" min="1" step="1" value="1" />
+              <input class="input" id="shoppingUnitInput" value="件" placeholder="单位" />
+              <button class="btn btn-outline" id="addShoppingBtn">➕ 添加</button>
+            </div>
             <div class="shopping-list" id="shoppingList"></div>
           </section>
 
@@ -185,11 +199,13 @@
   <script>
     const ITEMS_KEY = "family-inventory-v3-items";
     const CATEGORIES_KEY = "family-inventory-v3-categories";
+    const SHOPPING_KEY = "family-inventory-v4-shopping";
     const defaultCategories = ["食品", "清洁", "药品", "日用品", "护肤", "厨房", "其他"];
     const LOW_STOCK_THRESHOLD = 2;
 
     let items = loadItems();
     let customCategories = loadCategories();
+    let shoppingItems = loadShoppingItems();
     let editingId = null;
 
     const els = {
@@ -197,6 +213,7 @@
       nameInput: document.getElementById("nameInput"), quantityInput: document.getElementById("quantityInput"), unitInput: document.getElementById("unitInput"), categoryInput: document.getElementById("categoryInput"), sceneInput: document.getElementById("sceneInput"), expireDateInput: document.getElementById("expireDateInput"), noteInput: document.getElementById("noteInput"),
       newCategoryInput: document.getElementById("newCategoryInput"), addCategoryBtn: document.getElementById("addCategoryBtn"), categoryChips: document.getElementById("categoryChips"),
       categoryFilter: document.getElementById("categoryFilter"), searchInput: document.getElementById("searchInput"), sortBy: document.getElementById("sortBy"), inventoryList: document.getElementById("inventoryList"), shoppingList: document.getElementById("shoppingList"), copyShoppingBtn: document.getElementById("copyShoppingBtn"),
+      shoppingNameInput: document.getElementById("shoppingNameInput"), shoppingQuantityInput: document.getElementById("shoppingQuantityInput"), shoppingUnitInput: document.getElementById("shoppingUnitInput"), addShoppingBtn: document.getElementById("addShoppingBtn"),
       totalKinds: document.getElementById("totalKinds"), totalQuantity: document.getElementById("totalQuantity"), expiringSoon: document.getElementById("expiringSoon"), shoppingCount: document.getElementById("shoppingCount")
     };
 
@@ -206,17 +223,14 @@
     function createId() { return window.crypto && crypto.randomUUID ? crypto.randomUUID() : "item-" + Date.now() + "-" + Math.random().toString(16).slice(2); }
     function loadItems() { try { const raw = localStorage.getItem(ITEMS_KEY); if (raw) return JSON.parse(raw); const old = localStorage.getItem("family-inventory-v2-offline"); return old ? JSON.parse(old) : []; } catch { return []; } }
     function loadCategories() { try { const raw = localStorage.getItem(CATEGORIES_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; } }
-    function saveAll() { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); localStorage.setItem(CATEGORIES_KEY, JSON.stringify(customCategories)); }
+    function loadShoppingItems() { try { const raw = localStorage.getItem(SHOPPING_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+    function saveAll() { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); localStorage.setItem(CATEGORIES_KEY, JSON.stringify(customCategories)); localStorage.setItem(SHOPPING_KEY, JSON.stringify(shoppingItems)); }
     function escapeHTML(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 
     function getCategories() {
       const set = new Set([...defaultCategories, ...customCategories]);
       items.forEach(item => { if (item.category) set.add(item.category); });
       return Array.from(set);
-    }
-
-    function getShoppingItems() {
-      return items.filter(item => Number(item.quantity || 0) <= LOW_STOCK_THRESHOLD);
     }
 
     function renderCategoryOptions() {
@@ -259,22 +273,19 @@
     }
 
     function renderStats() {
-      const shoppingItems = getShoppingItems();
       els.totalKinds.textContent = items.length;
       els.totalQuantity.textContent = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
       els.expiringSoon.textContent = items.filter(item => { const days = daysUntil(item.expireDate); return days !== null && days >= 0 && days <= 7; }).length;
-      els.shoppingCount.textContent = shoppingItems.length;
+      els.shoppingCount.textContent = shoppingItems.filter(item => !item.done).length;
     }
 
     function renderShoppingList() {
-      const shoppingItems = getShoppingItems();
       if (!shoppingItems.length) {
-        els.shoppingList.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><p class="empty-title">暂时不用补货</p><p class="empty-desc">数量小于或等于 ${LOW_STOCK_THRESHOLD} 的物品会自动出现在这里。</p></div>`;
+        els.shoppingList.innerHTML = `<div class="empty"><div class="empty-icon">🛒</div><p class="empty-title">购物清单为空</p><p class="empty-desc">在上方手动添加想买的东西。购物清单不会自动根据库存生成。</p></div>`;
         return;
       }
       els.shoppingList.innerHTML = shoppingItems.map(item => {
-        const reason = Number(item.quantity || 0) === 0 ? "已耗尽" : "仅剩 " + item.quantity + " " + (item.unit || "件");
-        return `<div class="shopping-item"><div><div class="shopping-name">${escapeHTML(item.name)}</div><div class="shopping-reason">${escapeHTML(item.category || "其他")} · ${escapeHTML(reason)}</div></div><button class="btn btn-outline" data-action="shopping-in" data-id="${escapeHTML(item.id)}">已购买 +1</button></div>`;
+        return `<div class="shopping-item"><div class="shopping-left"><input class="shopping-checkbox" type="checkbox" ${item.done ? "checked" : ""} data-action="toggle-shopping" data-id="${escapeHTML(item.id)}" /><div><div class="shopping-name ${item.done ? "done" : ""}">${escapeHTML(item.name)}</div><div class="shopping-reason">计划购买：${escapeHTML(item.quantity)} ${escapeHTML(item.unit || "件")}</div></div></div><div class="shopping-actions"><button class="btn btn-outline" data-action="shopping-to-inventory" data-id="${escapeHTML(item.id)}">加入库存</button><button class="btn btn-danger" data-action="delete-shopping" data-id="${escapeHTML(item.id)}">删除</button></div></div>`;
       }).join("");
     }
 
@@ -288,7 +299,7 @@
         const status = expiryStatus(item);
         const note = item.note ? " · " + escapeHTML(item.note) : "";
         const sceneTag = item.scene ? `<span class="tag scene">${escapeHTML(item.scene)}</span>` : "";
-        const lowTag = Number(item.quantity || 0) <= LOW_STOCK_THRESHOLD ? `<span class="tag low">🛒 待补货</span>` : "";
+        const lowTag = Number(item.quantity || 0) <= LOW_STOCK_THRESHOLD ? `<span class="tag low">库存较少</span>` : "";
         return `<div class="card item-card"><div class="item-layout"><div class="item-main"><div class="item-title-row"><h3 class="item-name">${escapeHTML(item.name)}</h3><span class="tag">${escapeHTML(item.category || "其他")}</span>${sceneTag}${lowTag}<span class="tag ${status.tone}">${status.tone === "danger" || status.tone === "warning" ? "⚠️" : "✅"} ${escapeHTML(status.label)}</span></div><p class="item-meta">有效期：${escapeHTML(item.expireDate || "未记录")}${note}</p></div><div class="item-actions"><div class="quantity-box"><div class="quantity-number">${escapeHTML(item.quantity)}</div><div class="quantity-unit">${escapeHTML(item.unit || "件")}</div></div><button class="btn btn-outline" data-action="in" data-id="${escapeHTML(item.id)}">🛒 入库 +1</button><button class="btn btn-outline" data-action="out" data-id="${escapeHTML(item.id)}">➖ 出库 -1</button><button class="btn btn-outline" data-action="consume" data-id="${escapeHTML(item.id)}">耗尽</button><button class="btn btn-ghost" data-action="edit" data-id="${escapeHTML(item.id)}">编辑</button><button class="btn btn-danger" data-action="delete" data-id="${escapeHTML(item.id)}">删除</button></div></div></div>`;
       }).join("");
     }
@@ -315,7 +326,40 @@
 
     function addCategory() { const name = els.newCategoryInput.value.trim(); if (!name) return; if (getCategories().includes(name)) { alert("这个分类已经存在。 "); return; } customCategories.push(name); els.newCategoryInput.value = ""; render(); els.categoryInput.value = name; }
     function deleteCategory(name) { if (!customCategories.includes(name)) return; if (confirm("确定删除分类“" + name + "”吗？已有库存不会被删除。")) { customCategories = customCategories.filter(category => category !== name); render(); } }
-    function copyShoppingList() { const shoppingItems = getShoppingItems(); if (!shoppingItems.length) { alert("购物清单为空。 "); return; } const text = shoppingItems.map(item => "- " + item.name + "（" + (item.category || "其他") + "，当前剩余 " + item.quantity + " " + (item.unit || "件") + "）").join("\n"); if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => alert("购物清单已复制。")); else prompt("请手动复制购物清单：", text); }
+
+    function addShoppingItem() {
+      const name = els.shoppingNameInput.value.trim();
+      if (!name) return;
+      shoppingItems.unshift({ id: createId(), name, quantity: Math.max(1, Number(els.shoppingQuantityInput.value || 1)), unit: els.shoppingUnitInput.value.trim() || "件", done: false, createdAt: new Date().toISOString() });
+      els.shoppingNameInput.value = "";
+      els.shoppingQuantityInput.value = "1";
+      els.shoppingUnitInput.value = "件";
+      render();
+    }
+
+    function toggleShoppingItem(id) { shoppingItems = shoppingItems.map(item => item.id === id ? { ...item, done: !item.done } : item); render(); }
+    function deleteShoppingItem(id) { shoppingItems = shoppingItems.filter(item => item.id !== id); render(); }
+
+    function shoppingToInventory(id) {
+      const item = shoppingItems.find(item => item.id === id);
+      if (!item) return;
+      const existing = items.find(inv => inv.name.trim() === item.name.trim());
+      if (existing) {
+        items = items.map(inv => inv.id === existing.id ? { ...inv, quantity: Number(inv.quantity || 0) + Number(item.quantity || 1), updatedAt: new Date().toISOString() } : inv);
+      } else {
+        items.unshift({ id: createId(), name: item.name, quantity: Number(item.quantity || 1), unit: item.unit || "件", category: "其他", scene: "", expireDate: "", note: "由购物清单加入", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+      }
+      shoppingItems = shoppingItems.map(shop => shop.id === id ? { ...shop, done: true } : shop);
+      render();
+    }
+
+    function copyShoppingList() {
+      const activeItems = shoppingItems.filter(item => !item.done);
+      if (!activeItems.length) { alert("没有未完成的购物项。 "); return; }
+      const text = activeItems.map(item => "- " + item.name + " × " + item.quantity + " " + (item.unit || "件")).join("\n");
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => alert("购物清单已复制。"));
+      else prompt("请手动复制购物清单：", text);
+    }
 
     els.form.addEventListener("submit", handleSubmit);
     els.cancelEditBtn.addEventListener("click", resetForm);
@@ -325,6 +369,8 @@
     els.sortBy.addEventListener("change", renderList);
     els.addCategoryBtn.addEventListener("click", addCategory);
     els.newCategoryInput.addEventListener("keydown", event => { if (event.key === "Enter") addCategory(); });
+    els.addShoppingBtn.addEventListener("click", addShoppingItem);
+    els.shoppingNameInput.addEventListener("keydown", event => { if (event.key === "Enter") addShoppingItem(); });
     els.copyShoppingBtn.addEventListener("click", copyShoppingList);
 
     els.categoryChips.addEventListener("click", event => { const button = event.target.closest("button[data-action='delete-category']"); if (button) deleteCategory(button.dataset.category); });
@@ -332,11 +378,17 @@
       const button = event.target.closest("button[data-action]");
       if (!button) return;
       const action = button.dataset.action, id = button.dataset.id;
-      if (action === "in" || action === "shopping-in") quickIn(id);
+      if (action === "in") quickIn(id);
       if (action === "out") quickOut(id);
       if (action === "consume") consumeAll(id);
       if (action === "edit") editItem(id);
       if (action === "delete") deleteItem(id);
+      if (action === "delete-shopping") deleteShoppingItem(id);
+      if (action === "shopping-to-inventory") shoppingToInventory(id);
+    });
+    document.addEventListener("change", event => {
+      const checkbox = event.target.closest("input[data-action='toggle-shopping']");
+      if (checkbox) toggleShoppingItem(checkbox.dataset.id);
     });
 
     render();
