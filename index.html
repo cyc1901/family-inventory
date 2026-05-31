@@ -5,490 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>家庭库存管理</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
       background: #ecfdf5;
       color: #0f172a;
     }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .app {
-      min-height: 100vh;
-      padding: 24px 16px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: #d1fae5;
-      color: #047857;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-    }
-
-    h1 {
-      margin: 12px 0 8px;
-      font-size: clamp(28px, 5vw, 42px);
-      line-height: 1.1;
-    }
-
-    .subtitle {
-      margin: 0;
-      max-width: 680px;
-      color: #64748b;
-      line-height: 1.7;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 400px 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 24px;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
-    }
-
-    .card-inner {
-      padding: 20px;
-    }
-
-    .stat-card {
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      min-height: 120px;
-    }
-
-    .stat-title {
-      margin: 0;
-      color: #64748b;
-      font-size: 14px;
-    }
-
-    .stat-value {
-      margin: 6px 0 4px;
-      font-size: 32px;
-      font-weight: 800;
-    }
-
-    .stat-desc {
-      margin: 0;
-      color: #64748b;
-      font-size: 14px;
-    }
-
-    .stat-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
-      display: grid;
-      place-items: center;
-      background: #d1fae5;
-      color: #047857;
-      flex: 0 0 auto;
-    }
-
-    .stat-icon.warning {
-      background: #ffedd5;
-      color: #c2410c;
-    }
-
-    .stat-icon.danger {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .section-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .form {
-      display: grid;
-      gap: 16px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    label {
-      display: block;
-    }
-
-    .label-text {
-      display: block;
-      margin-bottom: 6px;
-      color: #064e3b;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .required {
-      color: #ef4444;
-    }
-
-    .input {
-      width: 100%;
-      border-radius: 16px;
-      border: 1px solid #a7f3d0;
-      background: white;
-      padding: 11px 13px;
-      outline: none;
-      color: #0f172a;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    textarea.input {
-      min-height: 96px;
-      resize: vertical;
-    }
-
-    .input:focus {
-      border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      border-radius: 15px;
-      padding: 10px 14px;
-      border: 1px solid transparent;
-      font-weight: 700;
-      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
-      user-select: none;
-      white-space: nowrap;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-primary {
-      width: 100%;
-      min-height: 46px;
-      color: white;
-      background: #059669;
-    }
-
-    .btn-primary:hover {
-      background: #047857;
-    }
-
-    .btn-outline {
-      color: #065f46;
-      background: #ffffff;
-      border-color: #a7f3d0;
-    }
-
-    .btn-outline:hover {
-      background: #ecfdf5;
-    }
-
-    .btn-ghost {
-      color: #475569;
-      background: transparent;
-    }
-
-    .btn-ghost:hover {
-      color: #047857;
-      background: #ecfdf5;
-    }
-
-    .btn-danger {
-      color: #b91c1c;
-      background: transparent;
-    }
-
-    .btn-danger:hover {
-      background: #fef2f2;
-    }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1fr 170px 160px;
-      gap: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .search-box {
-      position: relative;
-    }
-
-    .search-box span {
-      position: absolute;
-      left: 13px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-      pointer-events: none;
-    }
-
-    .search-box .input {
-      padding-left: 42px;
-    }
-
-    .list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .item-card {
-      padding: 16px;
-      transition: box-shadow 0.15s ease, transform 0.15s ease;
-    }
-
-    .item-card:hover {
-      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09);
-      transform: translateY(-1px);
-    }
-
-    .item-layout {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .item-main {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .item-title-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .item-name {
-      margin: 0;
-      font-size: 19px;
-      line-height: 1.2;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      background: #d1fae5;
-      color: #047857;
-    }
-
-    .tag.scene {
-      background: white;
-      color: #047857;
-      border: 1px solid #a7f3d0;
-    }
-
-    .tag.neutral {
-      background: #f1f5f9;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-    }
-
-    .tag.safe {
-      background: #d1fae5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
-    }
-
-    .tag.soon {
-      background: #fef9c3;
-      color: #a16207;
-      border: 1px solid #fde68a;
-    }
-
-    .tag.warning {
-      background: #ffedd5;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
-    }
-
-    .tag.danger {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-    }
-
-    .item-meta {
-      margin: 0;
-      color: #64748b;
-      font-size: 14px;
-      line-height: 1.6;
-      word-break: break-word;
-    }
-
-    .item-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .quantity-box {
-      min-width: 76px;
-      padding: 9px 12px;
-      border-radius: 18px;
-      border: 1px solid #a7f3d0;
-      background: #ecfdf5;
-      text-align: center;
-    }
-
-    .quantity-number {
-      color: #065f46;
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
-
-    .quantity-unit {
-      margin-top: 2px;
-      color: #059669;
-      font-size: 12px;
-    }
-
-    .empty {
-      padding: 48px 20px;
-      text-align: center;
-      color: #64748b;
-    }
-
-    .empty-icon {
-      margin-bottom: 10px;
-      font-size: 42px;
-    }
-
-    .empty-title {
-      margin: 0 0 6px;
-      color: #0f172a;
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .empty-desc {
-      margin: 0;
-      font-size: 14px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 980px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; padding: 24px 16px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: #d1fae5; color: #047857; font-size: 14px; font-weight: 600; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
+    h1 { margin: 12px 0 8px; font-size: clamp(28px, 5vw, 42px); line-height: 1.1; }
+    .subtitle { margin: 0; max-width: 680px; color: #64748b; line-height: 1.7; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .main-grid { display: grid; grid-template-columns: 400px 1fr; gap: 24px; align-items: start; }
+    .card { background: #ffffff; border-radius: 24px; box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07); }
+    .card-inner { padding: 20px; }
+    .stat-card { padding: 20px; display: flex; justify-content: space-between; gap: 12px; min-height: 120px; }
+    .stat-title { margin: 0; color: #64748b; font-size: 14px; }
+    .stat-value { margin: 6px 0 4px; font-size: 32px; font-weight: 800; }
+    .stat-desc { margin: 0; color: #64748b; font-size: 14px; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 16px; display: grid; place-items: center; background: #d1fae5; color: #047857; flex: 0 0 auto; }
+    .stat-icon.warning { background: #ffedd5; color: #c2410c; }
+    .stat-icon.danger { background: #fee2e2; color: #b91c1c; }
+    .section-title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+    h2 { margin: 0; font-size: 22px; }
+    h3.small-title { margin: 0 0 12px; font-size: 17px; }
+    .form { display: grid; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    label { display: block; }
+    .label-text { display: block; margin-bottom: 6px; color: #064e3b; font-size: 14px; font-weight: 700; }
+    .required { color: #ef4444; }
+    .input { width: 100%; border-radius: 16px; border: 1px solid #a7f3d0; background: white; padding: 11px 13px; outline: none; color: #0f172a; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+    textarea.input { min-height: 96px; resize: vertical; }
+    .input:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 15px; padding: 10px 14px; border: 1px solid transparent; font-weight: 700; transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease; user-select: none; white-space: nowrap; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { width: 100%; min-height: 46px; color: white; background: #059669; }
+    .btn-primary:hover { background: #047857; }
+    .btn-outline { color: #065f46; background: #ffffff; border-color: #a7f3d0; }
+    .btn-outline:hover { background: #ecfdf5; }
+    .btn-ghost { color: #475569; background: transparent; }
+    .btn-ghost:hover { color: #047857; background: #ecfdf5; }
+    .btn-danger { color: #b91c1c; background: transparent; }
+    .btn-danger:hover { background: #fef2f2; }
+    .toolbar { display: grid; grid-template-columns: 1fr 170px 160px; gap: 12px; padding: 16px; margin-bottom: 16px; }
+    .search-box { position: relative; }
+    .search-box span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+    .search-box .input { padding-left: 42px; }
+    .side-stack { display: grid; gap: 16px; }
+    .category-manager { display: grid; gap: 12px; }
+    .category-add-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .category-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #a7f3d0; background: #ecfdf5; color: #047857; border-radius: 999px; padding: 7px 10px; font-size: 13px; font-weight: 700; }
+    .chip button { border: 0; background: transparent; color: #b91c1c; padding: 0; font-weight: 900; }
+    .hint { margin: 0; color: #64748b; font-size: 13px; line-height: 1.6; }
+    .shopping-card { margin-bottom: 16px; padding: 16px; }
+    .shopping-list { display: grid; gap: 8px; }
+    .shopping-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #d1fae5; background: #f0fdf4; border-radius: 16px; padding: 10px 12px; }
+    .shopping-name { font-weight: 800; color: #064e3b; }
+    .shopping-reason { color: #64748b; font-size: 13px; }
+    .list { display: grid; gap: 12px; }
+    .item-card { padding: 16px; transition: box-shadow 0.15s ease, transform 0.15s ease; }
+    .item-card:hover { box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09); transform: translateY(-1px); }
+    .item-layout { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .item-main { min-width: 0; flex: 1; }
+    .item-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .item-name { margin: 0; font-size: 19px; line-height: 1.2; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; background: #d1fae5; color: #047857; }
+    .tag.scene { background: white; color: #047857; border: 1px solid #a7f3d0; }
+    .tag.low { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .tag.neutral { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+    .tag.safe { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
+    .tag.soon { background: #fef9c3; color: #a16207; border: 1px solid #fde68a; }
+    .tag.warning { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+    .tag.danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    .item-meta { margin: 0; color: #64748b; font-size: 14px; line-height: 1.6; word-break: break-word; }
+    .item-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+    .quantity-box { min-width: 76px; padding: 9px 12px; border-radius: 18px; border: 1px solid #a7f3d0; background: #ecfdf5; text-align: center; }
+    .quantity-number { color: #065f46; font-size: 22px; font-weight: 900; line-height: 1.1; }
+    .quantity-unit { margin-top: 2px; color: #059669; font-size: 12px; }
+    .empty { padding: 32px 20px; text-align: center; color: #64748b; }
+    .empty-icon { margin-bottom: 10px; font-size: 42px; }
+    .empty-title { margin: 0 0 6px; color: #0f172a; font-size: 18px; font-weight: 800; }
+    .empty-desc { margin: 0; font-size: 14px; }
+    .hidden { display: none !important; }
+    @media (max-width: 980px) { .main-grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 720px) {
-      .app {
-        padding: 18px 12px;
-      }
-
-      .header {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .item-layout {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .item-actions {
-        justify-content: flex-start;
-      }
-
-      .item-actions .btn {
-        flex: 1 1 auto;
-      }
-
-      .quantity-box {
-        order: -1;
-        width: 100%;
-      }
+      .app { padding: 18px 12px; }
+      .header { align-items: stretch; flex-direction: column; }
+      .stats { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .category-add-row { grid-template-columns: 1fr; }
+      .item-layout { align-items: stretch; flex-direction: column; }
+      .item-actions { justify-content: flex-start; }
+      .item-actions .btn { flex: 1 1 auto; }
+      .quantity-box { order: -1; width: 100%; }
     }
   </style>
 </head>
@@ -499,113 +115,67 @@
         <div>
           <div class="badge">🌿 家庭库存管理</div>
           <h1>家里有什么，一眼看清</h1>
-          <p class="subtitle">支持买东西入库、消耗出库、按分类或场景管理，并记录有效期。所有数据保存在本机浏览器 localStorage 中，离线也能使用。</p>
+          <p class="subtitle">支持入库、出库、分类管理、有效期提醒和购物清单。数据保存在本机浏览器 localStorage 中。</p>
         </div>
         <button class="btn btn-outline" id="clearAllBtn">🗑️ 清空库存</button>
       </section>
 
       <section class="stats">
-        <div class="card stat-card">
-          <div>
-            <p class="stat-title">物品种类</p>
-            <p class="stat-value" id="totalKinds">0</p>
-            <p class="stat-desc">当前记录的条目数</p>
-          </div>
-          <div class="stat-icon">📦</div>
-        </div>
-        <div class="card stat-card">
-          <div>
-            <p class="stat-title">库存总数</p>
-            <p class="stat-value" id="totalQuantity">0</p>
-            <p class="stat-desc">所有数量合计</p>
-          </div>
-          <div class="stat-icon">🧺</div>
-        </div>
-        <div class="card stat-card">
-          <div>
-            <p class="stat-title">7 天内到期</p>
-            <p class="stat-value" id="expiringSoon">0</p>
-            <p class="stat-desc">建议优先使用</p>
-          </div>
-          <div class="stat-icon warning">⚠️</div>
-        </div>
-        <div class="card stat-card">
-          <div>
-            <p class="stat-title">已过期</p>
-            <p class="stat-value" id="expired">0</p>
-            <p class="stat-desc">建议检查处理</p>
-          </div>
-          <div class="stat-icon danger">⛔</div>
-        </div>
+        <div class="card stat-card"><div><p class="stat-title">物品种类</p><p class="stat-value" id="totalKinds">0</p><p class="stat-desc">当前记录的条目数</p></div><div class="stat-icon">📦</div></div>
+        <div class="card stat-card"><div><p class="stat-title">库存总数</p><p class="stat-value" id="totalQuantity">0</p><p class="stat-desc">所有数量合计</p></div><div class="stat-icon">🧺</div></div>
+        <div class="card stat-card"><div><p class="stat-title">7 天内到期</p><p class="stat-value" id="expiringSoon">0</p><p class="stat-desc">建议优先使用</p></div><div class="stat-icon warning">⚠️</div></div>
+        <div class="card stat-card"><div><p class="stat-title">购物清单</p><p class="stat-value" id="shoppingCount">0</p><p class="stat-desc">库存不足或已耗尽</p></div><div class="stat-icon danger">🛒</div></div>
       </section>
 
       <section class="main-grid">
-        <section class="card card-inner">
-          <div class="section-title-row">
-            <h2 id="formTitle">入库登记</h2>
-            <button class="btn btn-ghost hidden" id="cancelEditBtn">↩️ 取消编辑</button>
-          </div>
-
-          <form class="form" id="inventoryForm">
-            <label>
-              <span class="label-text">物品名称 <span class="required">*</span></span>
-              <input class="input" id="nameInput" placeholder="例如：鸡蛋、洗衣液、感冒药" required />
-            </label>
-
-            <div class="form-row">
-              <label>
-                <span class="label-text">数量 <span class="required">*</span></span>
-                <input class="input" id="quantityInput" type="number" min="0" step="1" value="1" required />
-              </label>
-              <label>
-                <span class="label-text">单位</span>
-                <input class="input" id="unitInput" value="件" placeholder="件 / 瓶 / 袋" />
-              </label>
+        <div class="side-stack">
+          <section class="card card-inner">
+            <div class="section-title-row">
+              <h2 id="formTitle">入库登记</h2>
+              <button class="btn btn-ghost hidden" id="cancelEditBtn">↩️ 取消编辑</button>
             </div>
 
-            <div class="form-row">
-              <label>
-                <span class="label-text">分类 <span class="required">*</span></span>
-                <input class="input" id="categoryInput" list="categoryList" value="食品" placeholder="食品 / 清洁 / 药品" required />
-                <datalist id="categoryList"></datalist>
-              </label>
-              <label>
-                <span class="label-text">使用场景</span>
-                <input class="input" id="sceneInput" placeholder="厨房 / 浴室 / 客厅" />
-              </label>
+            <form class="form" id="inventoryForm">
+              <label><span class="label-text">物品名称 <span class="required">*</span></span><input class="input" id="nameInput" placeholder="例如：鸡蛋、洗衣液、感冒药" required /></label>
+              <div class="form-row">
+                <label><span class="label-text">数量 <span class="required">*</span></span><input class="input" id="quantityInput" type="number" min="0" step="1" value="1" required /></label>
+                <label><span class="label-text">单位</span><input class="input" id="unitInput" value="件" placeholder="件 / 瓶 / 袋" /></label>
+              </div>
+              <div class="form-row">
+                <label><span class="label-text">分类 <span class="required">*</span></span><select class="input" id="categoryInput" required></select></label>
+                <label><span class="label-text">使用场景</span><input class="input" id="sceneInput" placeholder="厨房 / 浴室 / 客厅" /></label>
+              </div>
+              <label><span class="label-text">有效期</span><input class="input" id="expireDateInput" type="date" /></label>
+              <label><span class="label-text">备注</span><textarea class="input" id="noteInput" placeholder="例如：买一送一、开封后 30 天内用完、放在冰箱第二层"></textarea></label>
+              <button class="btn btn-primary" type="submit" id="submitBtn">➕ 添加入库</button>
+            </form>
+          </section>
+
+          <section class="card card-inner category-manager">
+            <h3 class="small-title">分类管理</h3>
+            <div class="category-add-row">
+              <input class="input" id="newCategoryInput" placeholder="例如：饮料、宠物用品、冷冻食品" />
+              <button class="btn btn-outline" id="addCategoryBtn">➕ 添加</button>
             </div>
-
-            <label>
-              <span class="label-text">有效期</span>
-              <input class="input" id="expireDateInput" type="date" />
-            </label>
-
-            <label>
-              <span class="label-text">备注</span>
-              <textarea class="input" id="noteInput" placeholder="例如：买一送一、开封后 30 天内用完、放在冰箱第二层"></textarea>
-            </label>
-
-            <button class="btn btn-primary" type="submit" id="submitBtn">➕ 添加入库</button>
-          </form>
-        </section>
+            <div class="category-chips" id="categoryChips"></div>
+            <p class="hint">删除分类不会删除库存物品；已有物品仍会显示原分类。新增分类会保存在本机。</p>
+          </section>
+        </div>
 
         <section>
-          <div class="card toolbar">
-            <div class="search-box">
-              <span>🔍</span>
-              <input class="input" id="searchInput" placeholder="搜索物品、分类、场景或备注" />
+          <section class="card shopping-card">
+            <div class="section-title-row">
+              <h2>购物清单</h2>
+              <button class="btn btn-outline" id="copyShoppingBtn">复制清单</button>
             </div>
-            <select class="input" id="categoryFilter">
-              <option value="全部">全部分类</option>
-            </select>
-            <select class="input" id="sortBy">
-              <option value="expiry">按有效期排序</option>
-              <option value="quantity">按数量排序</option>
-              <option value="category">按分类排序</option>
-              <option value="name">按名称排序</option>
-            </select>
-          </div>
+            <div class="shopping-list" id="shoppingList"></div>
+          </section>
 
+          <div class="card toolbar">
+            <div class="search-box"><span>🔍</span><input class="input" id="searchInput" placeholder="搜索物品、分类、场景或备注" /></div>
+            <select class="input" id="categoryFilter"><option value="全部">全部分类</option></select>
+            <select class="input" id="sortBy"><option value="expiry">按有效期排序</option><option value="quantity">按数量排序</option><option value="category">按分类排序</option><option value="name">按名称排序</option></select>
+          </div>
           <div class="list" id="inventoryList"></div>
         </section>
       </section>
@@ -613,132 +183,74 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "family-inventory-v2-offline";
+    const ITEMS_KEY = "family-inventory-v3-items";
+    const CATEGORIES_KEY = "family-inventory-v3-categories";
     const defaultCategories = ["食品", "清洁", "药品", "日用品", "护肤", "厨房", "其他"];
+    const LOW_STOCK_THRESHOLD = 2;
 
     let items = loadItems();
+    let customCategories = loadCategories();
     let editingId = null;
 
     const els = {
-      form: document.getElementById("inventoryForm"),
-      formTitle: document.getElementById("formTitle"),
-      submitBtn: document.getElementById("submitBtn"),
-      cancelEditBtn: document.getElementById("cancelEditBtn"),
-      clearAllBtn: document.getElementById("clearAllBtn"),
-      nameInput: document.getElementById("nameInput"),
-      quantityInput: document.getElementById("quantityInput"),
-      unitInput: document.getElementById("unitInput"),
-      categoryInput: document.getElementById("categoryInput"),
-      sceneInput: document.getElementById("sceneInput"),
-      expireDateInput: document.getElementById("expireDateInput"),
-      noteInput: document.getElementById("noteInput"),
-      categoryList: document.getElementById("categoryList"),
-      categoryFilter: document.getElementById("categoryFilter"),
-      searchInput: document.getElementById("searchInput"),
-      sortBy: document.getElementById("sortBy"),
-      inventoryList: document.getElementById("inventoryList"),
-      totalKinds: document.getElementById("totalKinds"),
-      totalQuantity: document.getElementById("totalQuantity"),
-      expiringSoon: document.getElementById("expiringSoon"),
-      expired: document.getElementById("expired"),
+      form: document.getElementById("inventoryForm"), formTitle: document.getElementById("formTitle"), submitBtn: document.getElementById("submitBtn"), cancelEditBtn: document.getElementById("cancelEditBtn"), clearAllBtn: document.getElementById("clearAllBtn"),
+      nameInput: document.getElementById("nameInput"), quantityInput: document.getElementById("quantityInput"), unitInput: document.getElementById("unitInput"), categoryInput: document.getElementById("categoryInput"), sceneInput: document.getElementById("sceneInput"), expireDateInput: document.getElementById("expireDateInput"), noteInput: document.getElementById("noteInput"),
+      newCategoryInput: document.getElementById("newCategoryInput"), addCategoryBtn: document.getElementById("addCategoryBtn"), categoryChips: document.getElementById("categoryChips"),
+      categoryFilter: document.getElementById("categoryFilter"), searchInput: document.getElementById("searchInput"), sortBy: document.getElementById("sortBy"), inventoryList: document.getElementById("inventoryList"), shoppingList: document.getElementById("shoppingList"), copyShoppingBtn: document.getElementById("copyShoppingBtn"),
+      totalKinds: document.getElementById("totalKinds"), totalQuantity: document.getElementById("totalQuantity"), expiringSoon: document.getElementById("expiringSoon"), shoppingCount: document.getElementById("shoppingCount")
     };
 
-    function todayISO() {
-      return new Date().toISOString().slice(0, 10);
-    }
-
-    function daysUntil(dateString) {
-      if (!dateString) return null;
-      const today = new Date(todayISO());
-      const target = new Date(dateString);
-      return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-    }
-
-    function expiryStatus(item) {
-      const days = daysUntil(item.expireDate);
-      if (days === null) return { label: "未记录", tone: "neutral" };
-      if (days < 0) return { label: "已过期 " + Math.abs(days) + " 天", tone: "danger" };
-      if (days <= 7) return { label: days + " 天内到期", tone: "warning" };
-      if (days <= 30) return { label: days + " 天后到期", tone: "soon" };
-      return { label: days + " 天后到期", tone: "safe" };
-    }
-
-    function createId() {
-      if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
-      return "item-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-    }
-
-    function loadItems() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
-      }
-    }
-
-    function saveItems() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    }
-
-    function escapeHTML(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+    function todayISO() { return new Date().toISOString().slice(0, 10); }
+    function daysUntil(dateString) { if (!dateString) return null; const today = new Date(todayISO()); const target = new Date(dateString); return Math.ceil((target - today) / 86400000); }
+    function expiryStatus(item) { const days = daysUntil(item.expireDate); if (days === null) return { label: "未记录", tone: "neutral" }; if (days < 0) return { label: "已过期 " + Math.abs(days) + " 天", tone: "danger" }; if (days <= 7) return { label: days + " 天内到期", tone: "warning" }; if (days <= 30) return { label: days + " 天后到期", tone: "soon" }; return { label: days + " 天后到期", tone: "safe" }; }
+    function createId() { return window.crypto && crypto.randomUUID ? crypto.randomUUID() : "item-" + Date.now() + "-" + Math.random().toString(16).slice(2); }
+    function loadItems() { try { const raw = localStorage.getItem(ITEMS_KEY); if (raw) return JSON.parse(raw); const old = localStorage.getItem("family-inventory-v2-offline"); return old ? JSON.parse(old) : []; } catch { return []; } }
+    function loadCategories() { try { const raw = localStorage.getItem(CATEGORIES_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+    function saveAll() { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); localStorage.setItem(CATEGORIES_KEY, JSON.stringify(customCategories)); }
+    function escapeHTML(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 
     function getCategories() {
-      const set = new Set(defaultCategories);
-      items.forEach(item => {
-        if (item.category) set.add(item.category);
-      });
-      if (els.categoryInput.value.trim()) set.add(els.categoryInput.value.trim());
+      const set = new Set([...defaultCategories, ...customCategories]);
+      items.forEach(item => { if (item.category) set.add(item.category); });
       return Array.from(set);
     }
 
+    function getShoppingItems() {
+      return items.filter(item => Number(item.quantity || 0) <= LOW_STOCK_THRESHOLD);
+    }
+
     function renderCategoryOptions() {
-      const currentFilter = els.categoryFilter.value || "全部";
       const categories = getCategories();
+      const currentCategory = els.categoryInput.value || "食品";
+      const currentFilter = els.categoryFilter.value || "全部";
+      els.categoryInput.innerHTML = categories.map(category => `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`).join("");
+      els.categoryFilter.innerHTML = `<option value="全部">全部分类</option>` + categories.map(category => `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`).join("");
+      els.categoryInput.value = categories.includes(currentCategory) ? currentCategory : categories[0];
+      els.categoryFilter.value = ["全部", ...categories].includes(currentFilter) ? currentFilter : "全部";
+    }
 
-      els.categoryList.innerHTML = categories
-        .map(category => `<option value="${escapeHTML(category)}"></option>`)
-        .join("");
-
-      els.categoryFilter.innerHTML = `<option value="全部">全部分类</option>` + categories
-        .map(category => `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`)
-        .join("");
-
-      if (["全部", ...categories].includes(currentFilter)) {
-        els.categoryFilter.value = currentFilter;
-      }
+    function renderCategoryChips() {
+      const categories = getCategories();
+      els.categoryChips.innerHTML = categories.map(category => {
+        const canDelete = customCategories.includes(category);
+        return `<span class="chip">${escapeHTML(category)}${canDelete ? `<button title="删除分类" data-action="delete-category" data-category="${escapeHTML(category)}">×</button>` : ""}</span>`;
+      }).join("");
     }
 
     function getFilteredItems() {
       const keyword = els.searchInput.value.trim().toLowerCase();
       const categoryFilter = els.categoryFilter.value;
       const sortBy = els.sortBy.value;
-
-      const filtered = items.filter(item => {
-        const textFields = [item.name, item.category, item.scene, item.note]
-          .filter(Boolean)
-          .map(value => String(value).toLowerCase());
+      return items.filter(item => {
+        const textFields = [item.name, item.category, item.scene, item.note].filter(Boolean).map(value => String(value).toLowerCase());
         const matchesKeyword = !keyword || textFields.some(value => value.includes(keyword));
         const matchesCategory = categoryFilter === "全部" || item.category === categoryFilter;
         return matchesKeyword && matchesCategory;
-      });
-
-      return filtered.sort((a, b) => {
+      }).sort((a, b) => {
         if (sortBy === "name") return String(a.name).localeCompare(String(b.name), "zh-CN");
         if (sortBy === "quantity") return Number(b.quantity || 0) - Number(a.quantity || 0);
         if (sortBy === "category") return String(a.category).localeCompare(String(b.category), "zh-CN");
-
-        const aDays = daysUntil(a.expireDate);
-        const bDays = daysUntil(b.expireDate);
+        const aDays = daysUntil(a.expireDate), bDays = daysUntil(b.expireDate);
         if (aDays === null && bDays === null) return 0;
         if (aDays === null) return 1;
         if (bDays === null) return -1;
@@ -747,183 +259,63 @@
     }
 
     function renderStats() {
-      const totalKinds = items.length;
-      const totalQuantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-      const expiringSoon = items.filter(item => {
-        const days = daysUntil(item.expireDate);
-        return days !== null && days >= 0 && days <= 7;
-      }).length;
-      const expired = items.filter(item => {
-        const days = daysUntil(item.expireDate);
-        return days !== null && days < 0;
-      }).length;
+      const shoppingItems = getShoppingItems();
+      els.totalKinds.textContent = items.length;
+      els.totalQuantity.textContent = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+      els.expiringSoon.textContent = items.filter(item => { const days = daysUntil(item.expireDate); return days !== null && days >= 0 && days <= 7; }).length;
+      els.shoppingCount.textContent = shoppingItems.length;
+    }
 
-      els.totalKinds.textContent = totalKinds;
-      els.totalQuantity.textContent = totalQuantity;
-      els.expiringSoon.textContent = expiringSoon;
-      els.expired.textContent = expired;
+    function renderShoppingList() {
+      const shoppingItems = getShoppingItems();
+      if (!shoppingItems.length) {
+        els.shoppingList.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><p class="empty-title">暂时不用补货</p><p class="empty-desc">数量小于或等于 ${LOW_STOCK_THRESHOLD} 的物品会自动出现在这里。</p></div>`;
+        return;
+      }
+      els.shoppingList.innerHTML = shoppingItems.map(item => {
+        const reason = Number(item.quantity || 0) === 0 ? "已耗尽" : "仅剩 " + item.quantity + " " + (item.unit || "件");
+        return `<div class="shopping-item"><div><div class="shopping-name">${escapeHTML(item.name)}</div><div class="shopping-reason">${escapeHTML(item.category || "其他")} · ${escapeHTML(reason)}</div></div><button class="btn btn-outline" data-action="shopping-in" data-id="${escapeHTML(item.id)}">已购买 +1</button></div>`;
+      }).join("");
     }
 
     function renderList() {
       const filteredItems = getFilteredItems();
-
-      if (filteredItems.length === 0) {
-        els.inventoryList.innerHTML = `
-          <div class="card empty">
-            <div class="empty-icon">📦</div>
-            <p class="empty-title">暂无匹配库存</p>
-            <p class="empty-desc">可以先从左侧添加一个物品，或者调整搜索条件。</p>
-          </div>
-        `;
+      if (!filteredItems.length) {
+        els.inventoryList.innerHTML = `<div class="card empty"><div class="empty-icon">📦</div><p class="empty-title">暂无匹配库存</p><p class="empty-desc">可以先从左侧添加一个物品，或者调整搜索条件。</p></div>`;
         return;
       }
-
       els.inventoryList.innerHTML = filteredItems.map(item => {
         const status = expiryStatus(item);
         const note = item.note ? " · " + escapeHTML(item.note) : "";
-        const sceneTag = item.scene
-          ? `<span class="tag scene">${escapeHTML(item.scene)}</span>`
-          : "";
-
-        return `
-          <div class="card item-card">
-            <div class="item-layout">
-              <div class="item-main">
-                <div class="item-title-row">
-                  <h3 class="item-name">${escapeHTML(item.name)}</h3>
-                  <span class="tag">${escapeHTML(item.category || "其他")}</span>
-                  ${sceneTag}
-                  <span class="tag ${status.tone}">${status.tone === "danger" || status.tone === "warning" ? "⚠️" : "✅"} ${escapeHTML(status.label)}</span>
-                </div>
-                <p class="item-meta">有效期：${escapeHTML(item.expireDate || "未记录")}${note}</p>
-              </div>
-
-              <div class="item-actions">
-                <div class="quantity-box">
-                  <div class="quantity-number">${escapeHTML(item.quantity)}</div>
-                  <div class="quantity-unit">${escapeHTML(item.unit || "件")}</div>
-                </div>
-                <button class="btn btn-outline" data-action="in" data-id="${escapeHTML(item.id)}">🛒 入库 +1</button>
-                <button class="btn btn-outline" data-action="out" data-id="${escapeHTML(item.id)}">➖ 出库 -1</button>
-                <button class="btn btn-outline" data-action="consume" data-id="${escapeHTML(item.id)}">耗尽</button>
-                <button class="btn btn-ghost" data-action="edit" data-id="${escapeHTML(item.id)}">编辑</button>
-                <button class="btn btn-danger" data-action="delete" data-id="${escapeHTML(item.id)}">删除</button>
-              </div>
-            </div>
-          </div>
-        `;
+        const sceneTag = item.scene ? `<span class="tag scene">${escapeHTML(item.scene)}</span>` : "";
+        const lowTag = Number(item.quantity || 0) <= LOW_STOCK_THRESHOLD ? `<span class="tag low">🛒 待补货</span>` : "";
+        return `<div class="card item-card"><div class="item-layout"><div class="item-main"><div class="item-title-row"><h3 class="item-name">${escapeHTML(item.name)}</h3><span class="tag">${escapeHTML(item.category || "其他")}</span>${sceneTag}${lowTag}<span class="tag ${status.tone}">${status.tone === "danger" || status.tone === "warning" ? "⚠️" : "✅"} ${escapeHTML(status.label)}</span></div><p class="item-meta">有效期：${escapeHTML(item.expireDate || "未记录")}${note}</p></div><div class="item-actions"><div class="quantity-box"><div class="quantity-number">${escapeHTML(item.quantity)}</div><div class="quantity-unit">${escapeHTML(item.unit || "件")}</div></div><button class="btn btn-outline" data-action="in" data-id="${escapeHTML(item.id)}">🛒 入库 +1</button><button class="btn btn-outline" data-action="out" data-id="${escapeHTML(item.id)}">➖ 出库 -1</button><button class="btn btn-outline" data-action="consume" data-id="${escapeHTML(item.id)}">耗尽</button><button class="btn btn-ghost" data-action="edit" data-id="${escapeHTML(item.id)}">编辑</button><button class="btn btn-danger" data-action="delete" data-id="${escapeHTML(item.id)}">删除</button></div></div></div>`;
       }).join("");
     }
 
-    function render() {
-      renderCategoryOptions();
-      renderStats();
-      renderList();
-      saveItems();
-    }
-
-    function resetForm() {
-      editingId = null;
-      els.formTitle.textContent = "入库登记";
-      els.submitBtn.textContent = "➕ 添加入库";
-      els.cancelEditBtn.classList.add("hidden");
-      els.nameInput.value = "";
-      els.quantityInput.value = "1";
-      els.unitInput.value = "件";
-      els.categoryInput.value = "食品";
-      els.sceneInput.value = "";
-      els.expireDateInput.value = "";
-      els.noteInput.value = "";
-      renderCategoryOptions();
-    }
+    function render() { renderCategoryOptions(); renderCategoryChips(); renderStats(); renderShoppingList(); renderList(); saveAll(); }
+    function resetForm() { editingId = null; els.formTitle.textContent = "入库登记"; els.submitBtn.textContent = "➕ 添加入库"; els.cancelEditBtn.classList.add("hidden"); els.nameInput.value = ""; els.quantityInput.value = "1"; els.unitInput.value = "件"; els.categoryInput.value = "食品"; els.sceneInput.value = ""; els.expireDateInput.value = ""; els.noteInput.value = ""; renderCategoryOptions(); }
 
     function handleSubmit(event) {
       event.preventDefault();
-
       const name = els.nameInput.value.trim();
       if (!name) return;
-
-      const payload = {
-        name,
-        quantity: Math.max(0, Number(els.quantityInput.value || 0)),
-        unit: els.unitInput.value.trim() || "件",
-        category: els.categoryInput.value.trim() || "其他",
-        scene: els.sceneInput.value.trim(),
-        expireDate: els.expireDateInput.value,
-        note: els.noteInput.value.trim(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      if (editingId) {
-        items = items.map(item => item.id === editingId ? { ...item, ...payload } : item);
-      } else {
-        items = [{ id: createId(), createdAt: new Date().toISOString(), ...payload }, ...items];
-      }
-
-      resetForm();
-      render();
+      const payload = { name, quantity: Math.max(0, Number(els.quantityInput.value || 0)), unit: els.unitInput.value.trim() || "件", category: els.categoryInput.value || "其他", scene: els.sceneInput.value.trim(), expireDate: els.expireDateInput.value, note: els.noteInput.value.trim(), updatedAt: new Date().toISOString() };
+      if (editingId) items = items.map(item => item.id === editingId ? { ...item, ...payload } : item);
+      else items = [{ id: createId(), createdAt: new Date().toISOString(), ...payload }, ...items];
+      resetForm(); render();
     }
 
-    function editItem(id) {
-      const item = items.find(item => item.id === id);
-      if (!item) return;
+    function editItem(id) { const item = items.find(item => item.id === id); if (!item) return; editingId = id; els.formTitle.textContent = "编辑库存"; els.submitBtn.textContent = "💾 保存修改"; els.cancelEditBtn.classList.remove("hidden"); els.nameInput.value = item.name || ""; els.quantityInput.value = item.quantity ?? 0; els.unitInput.value = item.unit || "件"; els.sceneInput.value = item.scene || ""; els.expireDateInput.value = item.expireDate || ""; els.noteInput.value = item.note || ""; renderCategoryOptions(); els.categoryInput.value = item.category || "其他"; window.scrollTo({ top: 0, behavior: "smooth" }); }
+    function quickIn(id) { items = items.map(item => item.id === id ? { ...item, quantity: Number(item.quantity || 0) + 1, updatedAt: new Date().toISOString() } : item); render(); }
+    function quickOut(id) { items = items.map(item => item.id === id ? { ...item, quantity: Math.max(0, Number(item.quantity || 0) - 1), updatedAt: new Date().toISOString() } : item); render(); }
+    function consumeAll(id) { items = items.map(item => item.id === id ? { ...item, quantity: 0, updatedAt: new Date().toISOString() } : item); render(); }
+    function deleteItem(id) { items = items.filter(item => item.id !== id); if (editingId === id) resetForm(); render(); }
+    function clearAll() { if (!items.length) return; if (confirm("确定要清空所有库存吗？这个操作不可恢复。")) { items = []; resetForm(); render(); } }
 
-      editingId = id;
-      els.formTitle.textContent = "编辑库存";
-      els.submitBtn.textContent = "💾 保存修改";
-      els.cancelEditBtn.classList.remove("hidden");
-      els.nameInput.value = item.name || "";
-      els.quantityInput.value = item.quantity ?? 0;
-      els.unitInput.value = item.unit || "件";
-      els.categoryInput.value = item.category || "其他";
-      els.sceneInput.value = item.scene || "";
-      els.expireDateInput.value = item.expireDate || "";
-      els.noteInput.value = item.note || "";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      renderCategoryOptions();
-    }
-
-    function quickIn(id) {
-      items = items.map(item => item.id === id ? {
-        ...item,
-        quantity: Number(item.quantity || 0) + 1,
-        updatedAt: new Date().toISOString(),
-      } : item);
-      render();
-    }
-
-    function quickOut(id) {
-      items = items.map(item => item.id === id ? {
-        ...item,
-        quantity: Math.max(0, Number(item.quantity || 0) - 1),
-        updatedAt: new Date().toISOString(),
-      } : item);
-      render();
-    }
-
-    function consumeAll(id) {
-      items = items.map(item => item.id === id ? {
-        ...item,
-        quantity: 0,
-        updatedAt: new Date().toISOString(),
-      } : item);
-      render();
-    }
-
-    function deleteItem(id) {
-      items = items.filter(item => item.id !== id);
-      if (editingId === id) resetForm();
-      render();
-    }
-
-    function clearAll() {
-      if (!items.length) return;
-      if (confirm("确定要清空所有库存吗？这个操作不可恢复。")) {
-        items = [];
-        resetForm();
-        render();
-      }
-    }
+    function addCategory() { const name = els.newCategoryInput.value.trim(); if (!name) return; if (getCategories().includes(name)) { alert("这个分类已经存在。 "); return; } customCategories.push(name); els.newCategoryInput.value = ""; render(); els.categoryInput.value = name; }
+    function deleteCategory(name) { if (!customCategories.includes(name)) return; if (confirm("确定删除分类“" + name + "”吗？已有库存不会被删除。")) { customCategories = customCategories.filter(category => category !== name); render(); } }
+    function copyShoppingList() { const shoppingItems = getShoppingItems(); if (!shoppingItems.length) { alert("购物清单为空。 "); return; } const text = shoppingItems.map(item => "- " + item.name + "（" + (item.category || "其他") + "，当前剩余 " + item.quantity + " " + (item.unit || "件") + "）").join("\n"); if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => alert("购物清单已复制。")); else prompt("请手动复制购物清单：", text); }
 
     els.form.addEventListener("submit", handleSubmit);
     els.cancelEditBtn.addEventListener("click", resetForm);
@@ -931,16 +323,16 @@
     els.searchInput.addEventListener("input", renderList);
     els.categoryFilter.addEventListener("change", renderList);
     els.sortBy.addEventListener("change", renderList);
-    els.categoryInput.addEventListener("input", renderCategoryOptions);
+    els.addCategoryBtn.addEventListener("click", addCategory);
+    els.newCategoryInput.addEventListener("keydown", event => { if (event.key === "Enter") addCategory(); });
+    els.copyShoppingBtn.addEventListener("click", copyShoppingList);
 
-    els.inventoryList.addEventListener("click", event => {
+    els.categoryChips.addEventListener("click", event => { const button = event.target.closest("button[data-action='delete-category']"); if (button) deleteCategory(button.dataset.category); });
+    document.addEventListener("click", event => {
       const button = event.target.closest("button[data-action]");
       if (!button) return;
-
-      const action = button.dataset.action;
-      const id = button.dataset.id;
-
-      if (action === "in") quickIn(id);
+      const action = button.dataset.action, id = button.dataset.id;
+      if (action === "in" || action === "shopping-in") quickIn(id);
       if (action === "out") quickOut(id);
       if (action === "consume") consumeAll(id);
       if (action === "edit") editItem(id);
